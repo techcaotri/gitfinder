@@ -1,0 +1,8 @@
+{
+     "completedFolder": "./target/GitFinderResultCompleted",
+     "general": {
+          "autoRefresh": true,
+          "theme": "dark",
+          "gridDarkTheme": false
+     }
+}
