@@ -178,7 +178,7 @@ class SearchPageViewModel {
   }
 
   Future<void> executeCommand(WidgetRef ref, String folder, List<String> args) async {
-    // print('Executing command');
+    print("Executing command: java ${args.join(' ')}");
     String output = '';
     await Process.start('java', args, workingDirectory: config.targetFolder).then((Process process) {
       process.stdout.transform(utf8.decoder).forEach((s) => output += '$s\n');
@@ -207,7 +207,8 @@ class SearchPageViewModel {
       EasyLoading.showError('Error: JAVA_HOME not set', duration: const Duration(milliseconds: 200));
       return;
     }
-    var jps = Process.runSync('jps', [], workingDirectory: javaBinPath, runInShell: true);
+    // var jps = Process.runSync('jps', [], workingDirectory: javaBinPath, runInShell: true);
+    var jps = Process.runSync('/bin/sh', ['-c', 'jps']);
     for (var line in LineSplitter.split(jps.stdout)) {
       List<String> parts = line.split(' ');
       int pid = int.parse(parts[0]);
@@ -475,7 +476,7 @@ class SearchPageViewModel {
 
   void createSearchFolder() {
     DateTime now = DateTime.now();
-    var iso8601 = DateFormat('yyyyMMddTHHmmss.SS');
+    var iso8601 = DateFormat('yyyyMMddTHHmmss');
     String formattedDate = iso8601.format(now);
     String filename = '$formattedDate#New-search';
 
@@ -557,7 +558,8 @@ class SearchPageViewModel {
 
   String getFolderName(String name, {String date = ''}) {
     if (date == 'formatted') {
-      String date = DateTime.parse(name.substring(0, name.indexOf('#'))).toString();
+      print('folder name: ${name.substring(0, name.indexOf('#'))}');
+      String date = DateTime.parse(name.substring(name.lastIndexOf('/')+1, name.indexOf('#'))).toString();
       return date.substring(0, date.length - 4);
     } else if (date == 'raw') {
       return name.substring(0, name.indexOf('#'));
